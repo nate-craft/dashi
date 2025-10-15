@@ -76,14 +76,14 @@ impl Bookmarks {
 
 impl Display for Bookmarks {
     fn fmt(&self, format: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let len = self.len();
         format.write_str(&self.iter().enumerate().fold(
             String::new(),
             |mut result, (i, bookmark)| {
-                result.push_str("(");
-                result.push_str(&i.to_string());
-                result.push_str(") ");
                 result.push_str(&bookmark);
-                result.push_str("  ");
+                if i < len - 1 {
+                    result.push_str("\n");
+                }
                 result
             },
         ))

@@ -11,6 +11,7 @@ pub fn notify(
         Notification::new()
             .summary(title.as_ref())
             .body(body.as_ref())
+            .id(9999)
             .show()
             .map(|_| ())
     }

@@ -1,6 +1,7 @@
 use std::{
     error::Error,
     fs::{self},
+    io::{self, ErrorKind},
     path::{Path, PathBuf},
 };
 
@@ -23,7 +24,7 @@ impl BrightnessSpec {
             BrightnessCommand::Sub { n } => {
                 self.set_brightness(self.get_brightness()? as f32 - n as f32)?
             }
-            BrightnessCommand::Set { n } => self.set_brightness((n as f32).min(0.01).max(100.0))?,
+            BrightnessCommand::Set { n } => self.set_brightness((n as f32).min(100.0).max(0.01))?,
             BrightnessCommand::Get => {}
         }
 
@@ -45,7 +46,7 @@ impl BrightnessSpec {
         let written = (percent.min(100.0).max(0.01) / 100.0 * raw) as u32;
 
         Ok(fs::write(
-            self.get_path_brightness(),
+            self.get_path_brightness()?,
             format!("{}\0", written),
         )?)
     }
@@ -60,20 +61,28 @@ impl BrightnessSpec {
     }
 
     fn get_raw_brightness(&self) -> Result<u32, Box<dyn Error>> {
-        let as_string = fs::read_to_string(self.get_path_brightness())?;
+        let as_string = fs::read_to_string(self.get_path_brightness()?)?;
         Ok(as_string[..as_string.len() - 1].parse::<u32>()?)
     }
 
     fn get_raw_max_brightness(&self) -> Result<u32, Box<dyn Error>> {
-        let as_string = fs::read_to_string(self.get_path_max_brightness())?;
+        let as_string = fs::read_to_string(self.get_path_max_brightness()?)?;
         Ok(as_string[..as_string.len() - 1].parse::<u32>()?)
     }
 
-    fn get_path_brightness(&self) -> PathBuf {
-        Path::new("/sys/class/backlight/intel_backlight/brightness").to_path_buf()
+    fn get_path_system(&self) -> Result<PathBuf, io::Error> {
+        Path::new("/sys/class/backlight/")
+            .read_dir()?
+            .last()
+            .ok_or(io::Error::from(ErrorKind::NotFound))?
+            .map(|entry| entry.path())
     }
 
-    fn get_path_max_brightness(&self) -> PathBuf {
-        Path::new("/sys/class/backlight/intel_backlight/max_brightness").to_path_buf()
+    fn get_path_brightness(&self) -> Result<PathBuf, io::Error> {
+        Ok(self.get_path_system()?.join("brightness"))
+    }
+
+    fn get_path_max_brightness(&self) -> Result<PathBuf, io::Error> {
+        Ok(self.get_path_system()?.join("max_brightness"))
     }
 }
