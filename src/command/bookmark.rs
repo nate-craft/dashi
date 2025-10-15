@@ -1,12 +1,13 @@
 use std::{
-    error::Error,
     fmt::Display,
     fs::{self, File},
     io::BufWriter,
     ops::{Deref, DerefMut},
 };
 
-use clap::error::ErrorKind;
+use color_eyre::eyre::Error;
+use color_eyre::Result;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{command::BookmarkCommand, io::data_dir_file, notify::notify};
@@ -23,14 +24,14 @@ struct Bookmark(String);
 struct Bookmarks(Vec<Bookmark>);
 
 impl BookmarkSpec {
-    pub fn new(silent: bool) -> Result<Self, Box<dyn Error>> {
+    pub fn new(silent: bool) -> Result<Self, Error> {
         Ok(BookmarkSpec {
             silent,
             bookmarks: Bookmarks::new()?,
         })
     }
 
-    pub fn run(&mut self, modifier: BookmarkCommand) -> Result<(), Box<dyn Error>> {
+    pub fn run(&mut self, modifier: BookmarkCommand) -> Result<(), Error> {
         match modifier {
             BookmarkCommand::Stdout => println!("{}", self.bookmarks),
             BookmarkCommand::Add { bookmark } => {
@@ -40,12 +41,9 @@ impl BookmarkSpec {
             }
             BookmarkCommand::Remove { index } => {
                 if index >= self.bookmarks.len() {
-                    notify(
-                        self.silent,
-                        "Error",
-                        &format!("{} is not a valid bookmark index", index),
-                    )?;
-                    return Err(Box::new(clap::Error::new(ErrorKind::ValueValidation)));
+                    let msg = format!("{} is not a valid bookmark index", index);
+                    notify(self.silent, "Error", &msg)?;
+                    return Err(Error::msg(msg));
                 }
 
                 let removed = self.bookmarks.remove(index);
@@ -59,7 +57,7 @@ impl BookmarkSpec {
 }
 
 impl Bookmarks {
-    fn new() -> Result<Bookmarks, Box<dyn Error>> {
+    fn new() -> Result<Bookmarks, Error> {
         let path = data_dir_file("bookmarks.json")?;
         match fs::read_to_string(path) {
             Ok(string) => Ok(serde_json::from_str::<Bookmarks>(&string)?),
@@ -67,7 +65,7 @@ impl Bookmarks {
         }
     }
 
-    fn save(&self) -> Result<(), Box<dyn Error>> {
+    fn save(&self) -> Result<(), Error> {
         let path = data_dir_file("bookmarks.json")?;
         let file = File::create(path)?;
         Ok(serde_json::to_writer_pretty(BufWriter::new(file), self)?)

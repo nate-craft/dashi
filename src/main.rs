@@ -1,6 +1,5 @@
-use std::error::Error;
-
 use clap::Parser;
+use color_eyre::Result;
 
 use crate::command::{
     bookmark::BookmarkSpec, brightness::BrightnessSpec, volume::VolumeSpec, Command,
@@ -19,7 +18,7 @@ struct Args {
     command: Command,
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<()> {
     let args = Args::parse();
 
     match args.command {

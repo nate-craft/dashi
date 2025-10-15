@@ -1,3 +1,5 @@
+use color_eyre::eyre::Error;
+use color_eyre::Result;
 use pulse::callbacks::ListResult;
 use pulse::context::State as PaState;
 use pulse::volume::{ChannelVolumes, Volume as PaVolume};
@@ -6,7 +8,6 @@ use pulse::{
     error::{Code, PAErr},
     mainloop::standard::{IterateResult, Mainloop},
 };
-use std::error::Error;
 use std::fmt::Display;
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
@@ -14,6 +15,8 @@ use std::sync::{Arc, Mutex};
 use crate::notify::notify;
 
 use super::VolumeCommand;
+
+const MAX_VOLUME: i32 = 150;
 
 pub struct VolumeSpec {
     silent: bool,
@@ -29,7 +32,7 @@ impl VolumeSpec {
         VolumeSpec { silent }
     }
 
-    pub fn run(&self, modifier: VolumeCommand) -> Result<(), Box<dyn Error>> {
+    pub fn run(&self, modifier: VolumeCommand) -> Result<(), Error> {
         let mut pulse = Mainloop::new().ok_or(PAErr::from(Code::Access))?;
         let mut context = Context::new(&pulse, "dashi").ok_or(PAErr::from(Code::Access))?;
 
@@ -37,15 +40,15 @@ impl VolumeSpec {
         loop {
             match pulse.iterate(true) {
                 IterateResult::Success(_) => {}
-                IterateResult::Quit(_) => return Err(Box::new(PAErr::from(Code::Killed))),
+                IterateResult::Quit(_) => return Err(Error::new(PAErr::from(Code::Killed))),
                 IterateResult::Err(err) => {
-                    return Err(Box::new(err));
+                    return Err(Error::new(err));
                 }
             };
 
             match context.get_state() {
                 PaState::Unconnected | PaState::Failed | PaState::Terminated => {
-                    return Err(Box::new(PAErr::from(Code::Access)))
+                    return Err(Error::new(PAErr::from(Code::Access)))
                 }
                 PaState::Ready => break,
                 PaState::Connecting | PaState::Authorizing | PaState::SettingName => continue,
@@ -257,7 +260,7 @@ impl DashiVolume {
     }
 
     fn clamp(self) -> DashiVolume {
-        DashiVolume(self.0.max(0).min(150))
+        DashiVolume(self.0.max(0).min(MAX_VOLUME))
     }
 }
 
