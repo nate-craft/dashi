@@ -1,10 +1,13 @@
 use std::error::Error;
 
-use clap::{command, Parser};
+use clap::Parser;
 
-use crate::command::{brightness::Brightness, volume::Volume, Command};
+use crate::command::{
+    bookmark::BookmarkSpec, brightness::BrightnessSpec, volume::VolumeSpec, Command,
+};
 
 mod command;
+mod io;
 mod notify;
 
 #[derive(Parser)]
@@ -20,8 +23,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
     match args.command {
-        Command::Brightness { modifier } => Brightness::new(args.silent).run(modifier)?,
-        Command::Volume { modifier } => Volume::new(args.silent).run(modifier)?,
+        Command::Brightness { modifier } => BrightnessSpec::new(args.silent).run(modifier)?,
+        Command::Volume { modifier } => VolumeSpec::new(args.silent).run(modifier)?,
+        Command::Bookmark { modifier } => BookmarkSpec::new(args.silent)?.run(modifier)?,
         Command::Backup => todo!(),
         Command::Nightshift => todo!(),
     }

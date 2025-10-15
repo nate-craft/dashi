@@ -1,5 +1,6 @@
 use clap::Subcommand;
 
+pub mod bookmark;
 pub mod brightness;
 pub mod volume;
 
@@ -12,6 +13,10 @@ pub enum Command {
     Volume {
         #[command(subcommand)]
         modifier: VolumeCommand,
+    },
+    Bookmark {
+        #[command(subcommand)]
+        modifier: BookmarkCommand,
     },
     Backup,
     Nightshift,
@@ -53,4 +58,17 @@ pub enum BrightnessCommand {
         n: u32,
     },
     Get,
+}
+
+#[derive(Subcommand)]
+pub enum BookmarkCommand {
+    Stdout,
+    Add {
+        #[arg(value_enum)]
+        bookmark: String,
+    },
+    Remove {
+        #[arg(value_enum)]
+        index: usize,
+    },
 }

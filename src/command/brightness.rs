@@ -6,13 +6,13 @@ use std::{
 
 use crate::{command::BrightnessCommand, notify::notify};
 
-pub struct Brightness {
+pub struct BrightnessSpec {
     silent: bool,
 }
 
-impl Brightness {
+impl BrightnessSpec {
     pub fn new(silent: bool) -> Self {
-        Brightness { silent }
+        BrightnessSpec { silent }
     }
 
     pub fn run(&self, modifier: BrightnessCommand) -> Result<(), Box<dyn Error>> {

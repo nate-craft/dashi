@@ -15,7 +15,7 @@ use crate::notify::notify;
 
 use super::VolumeCommand;
 
-pub struct Volume {
+pub struct VolumeSpec {
     silent: bool,
 }
 
@@ -24,9 +24,9 @@ struct DashiVolume(i32);
 
 struct PaFeedback<T>(Arc<Mutex<Option<Result<T, PAErr>>>>);
 
-impl Volume {
+impl VolumeSpec {
     pub fn new(silent: bool) -> Self {
-        Volume { silent }
+        VolumeSpec { silent }
     }
 
     pub fn run(&self, modifier: VolumeCommand) -> Result<(), Box<dyn Error>> {
