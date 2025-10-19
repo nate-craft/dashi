@@ -5,7 +5,6 @@
 - [x] Brightness
   - [x] File location determined by /sys/class/backlight/ child
 - [x] Volume
-  - [ ] Possible configuration 
 - [x] Bookmarks
 - [ ] Bluetooth
 - [ ] Nightshift
