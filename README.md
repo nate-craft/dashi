@@ -16,6 +16,8 @@ Dashi is a simple shell for lightweight window managers on Linux with no backgro
 
 - Control bluetooth connectivity systemd
 
+- Control and monitor battery power and AC connections
+
 - Easily add/remove system notification with the `--silent` flag
 
 ___
