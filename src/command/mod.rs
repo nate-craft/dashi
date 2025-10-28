@@ -1,5 +1,6 @@
 use clap::Subcommand;
 
+pub mod bluetooth;
 pub mod bookmark;
 pub mod brightness;
 pub mod volume;
@@ -17,6 +18,10 @@ pub enum Command {
     Bookmark {
         #[command(subcommand)]
         modifier: BookmarkCommand,
+    },
+    Bluetooth {
+        #[command(subcommand)]
+        modifier: BluetoothCommand,
     },
     Backup,
     Nightshift,
@@ -71,4 +76,10 @@ pub enum BookmarkCommand {
         #[arg(value_enum)]
         index: usize,
     },
+}
+
+#[derive(Subcommand)]
+pub enum BluetoothCommand {
+    Toggle,
+    Status,
 }

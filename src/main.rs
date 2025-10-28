@@ -2,7 +2,8 @@ use clap::Parser;
 use color_eyre::Result;
 
 use crate::command::{
-    bookmark::BookmarkSpec, brightness::BrightnessSpec, volume::VolumeSpec, Command,
+    bluetooth::BluetoothSpec, bookmark::BookmarkSpec, brightness::BrightnessSpec,
+    volume::VolumeSpec, Command,
 };
 
 mod command;
@@ -25,6 +26,7 @@ fn main() -> Result<()> {
         Command::Brightness { modifier } => BrightnessSpec::new(args.silent).run(modifier)?,
         Command::Volume { modifier } => VolumeSpec::new(args.silent).run(modifier)?,
         Command::Bookmark { modifier } => BookmarkSpec::new(args.silent)?.run(modifier)?,
+        Command::Bluetooth { modifier } => BluetoothSpec::new(args.silent).run(modifier)?,
         Command::Backup => todo!(),
         Command::Nightshift => todo!(),
     }

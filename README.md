@@ -6,13 +6,15 @@ Dashi is a simple shell for lightweight window managers on Linux with no backgro
 
 ## Features
 
-- Set, add, subtract, and get backlight brightness
+- Control backlight brightness
 
-- Set, add, subtract, and get current volume
+- Control audio output and input
 
-- Get and toggle microphone and speaker mute status 
+- Control microphone and speaker mute status 
 
 - List, add, and remove global bookmarks
+
+- Control bluetooth connectivity systemd
 
 - Easily add/remove system notification with the `--silent` flag
 
@@ -20,8 +22,20 @@ ___
 
 ## Installation
 
-Dashi can be installed from source via [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
+Dashi can most easilly be installed via the installer script:
 ```sh
+curl --proto '=https' --tlsv1.2 -LsSf https://raw.githubusercontent.com/nate-craft/dashi/refs/heads/main/installer.sh | sh
+```
+
+Dashi can be manually built with cargo [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
+```sh
+# Permissions for bluetooth and backlight control
+DEV=$(ls --color=always /sys/class/backlight/ | head -n 1)
+BACKLIGHT_RULE=$(sed "s/DEV/${DEV}/g" pkg/90-backlight.rules)
+echo "$BACKLIGHT_RULE" | sudo tee /etc/udev/rules.d/90-backlight.rules > /dev/null 2>&1
+cat pkg/30-bluetooth.rules | sudo tee /etc/polkit-1/rules.d/30-bluetooth.rules > /dev/null 1>&1
+
+# Building the dashi binary
 cargo install --git https://github.com/nate-craft/dashi
 ```
 
@@ -44,4 +58,5 @@ bindsym --locked XF86AudioMute exec "dashi volume mute"
 bindsym --locked XF86AudioMicMute exec "dashi volume mute-mic"
 bindsym --locked XF86MonBrightnessUp exec "dashi brightness add 5"
 bindsym --locked XF86MonBrightnessDown exec "dashi brightness sub 5"
-````
+bindsym --locked XF86Bluetooth exec "dashi bluetooth toggle"
+```
