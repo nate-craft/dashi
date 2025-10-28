@@ -27,7 +27,7 @@ Dashi can most easilly be installed via the installer script:
 curl --proto '=https' --tlsv1.2 -LsSf https://raw.githubusercontent.com/nate-craft/dashi/refs/heads/main/installer.sh | sh
 ```
 
-Dashi can be manually built with cargo [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
+Dashi can be manually built with [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
 ```sh
 # Permissions for bluetooth and backlight control
 DEV=$(ls --color=always /sys/class/backlight/ | head -n 1)
