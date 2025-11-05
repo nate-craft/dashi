@@ -32,12 +32,9 @@ curl --proto '=https' --tlsv1.2 -LsSf https://raw.githubusercontent.com/nate-cra
 Dashi can be manually built with [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
 ```sh
 # Permissions for bluetooth and backlight control
-DEV=$(ls --color=always /sys/class/backlight/ | head -n 1)
-BACKLIGHT_RULE=$(sed "s/DEV/${DEV}/g" pkg/90-backlight.rules)
-
 sudo groupadd -f wheel
 sudo usermod -aG wheel "$USER"
-echo "$BACKLIGHT_RULE" | sudo tee /etc/udev/rules.d/90-backlight.rules > /dev/null 2>&1
+cat pkg/90-backlight.rules | sudo tee /etc/udev/rules.d/90-backlight.rules > /dev/null 2>&1
 cat pkg/30-bluetooth.rules | sudo tee /etc/polkit-1/rules.d/30-bluetooth.rules > /dev/null 1>&1
 
 # Building the dashi binary
@@ -55,7 +52,7 @@ ___
 - Keybinds can be changed to suit a given workflow
 
 ```sh
-bindsym Ctrl+Shift+b exec "dashi bookmark stdout | rofi -dmenu -theme theme | wl-copy "
+bindsym Ctrl+Shift+b exec "dashi bookmark stdout | rofi -dmenu | wl-copy "
 bindsym $mod+Shift+b exec "wl-paste | xargs -I _ dashi bookmark add _ "
 bindsym --locked XF86AudioRaiseVolume exec "dashi volume add 5"
 bindsym --locked XF86AudioLowerVolume exec "dashi volume sub 5"
