@@ -1,8 +1,10 @@
-use std::{fs, path::Path};
+use std::{fs, os::fd::IntoRawFd, path::Path, thread, time::Duration};
 
 use color_eyre::{eyre::Error, Result};
+use nix::sys::socket::{self, AddressFamily, SockFlag, SockType, UnixAddr};
 
 use crate::{command::PowerCommand, notify::notify};
+use nix::errno::Errno as NixErrno;
 
 pub struct PowerSpec {
     silent: bool,
@@ -45,9 +47,38 @@ impl PowerSpec {
                     notify(self.silent, "Low Battery", &capacity_str)?;
                 }
             }
+            PowerCommand::Daemon => self.daemon()?,
         }
 
         Ok(())
+    }
+
+    fn daemon(&self) -> Result<(), Error> {
+        let address = UnixAddr::new_abstract("dashi-power".as_bytes())?;
+        let socket = socket::socket(
+            AddressFamily::Unix,
+            SockType::Stream,
+            SockFlag::empty(),
+            None,
+        )?;
+
+        match socket::bind(socket.into_raw_fd(), &address) {
+            Ok(binded) => binded,
+            Err(NixErrno::EADDRINUSE) => {
+                println!("Dashi power daemon is already in used");
+                return Ok(());
+            }
+            Err(generic) => return Err(Error::new(generic)),
+        };
+
+        println!("Dashi battery daemon started");
+
+        loop {
+            if let Ok(capacity) = self.capacity() && !self.is_plugged()? && self.capacity()? < 20 {
+                notify(self.silent, "Low Battery", format!("{}%", capacity))?;
+            }
+            thread::sleep(Duration::from_secs(5));
+        }
     }
 
     fn is_plugged(&self) -> Result<bool, Error> {

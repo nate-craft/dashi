@@ -94,4 +94,5 @@ pub enum PowerCommand {
     Level,
     Plugged,
     Info,
+    Daemon,
 }

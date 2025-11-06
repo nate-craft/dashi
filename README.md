@@ -2,7 +2,7 @@
 
 ![](https://gist.githubusercontent.com/nate-craft/648bbda6337b503a5d703f86757e4647/raw/144cf1f5f80e9c5ac6b5efde45869d01feb2ccd9/brainmade.png)
 
-Dashi is a simple shell for lightweight window managers on Linux with no background tasks
+Dashi is a simple shell for lightweight window managers on Linux with minimal resources
 
 ## Features
 
@@ -16,7 +16,7 @@ Dashi is a simple shell for lightweight window managers on Linux with no backgro
 
 - Control bluetooth connectivity systemd
 
-- Control and monitor battery power and AC connections
+- Control and monitor battery power and AC connections with an optional notification daemon
 
 - Easily add/remove system notification with the `--silent` flag
 
@@ -57,6 +57,7 @@ ___
 - The `--locked` flag is passed to allow functionality with the screen locked
 - The `--silent` flag can be passed to disable system notifications
 - Keybinds can be changed to suit a given workflow
+- exec can be used for commands to run on startup
 
 ```sh
 bindsym Ctrl+Shift+b exec "dashi bookmark stdout | rofi -dmenu | wl-copy "
@@ -68,4 +69,6 @@ bindsym --locked XF86AudioMicMute exec "dashi volume mute-mic"
 bindsym --locked XF86MonBrightnessUp exec "dashi brightness add 5"
 bindsym --locked XF86MonBrightnessDown exec "dashi brightness sub 5"
 bindsym --locked XF86Bluetooth exec "dashi bluetooth toggle"
+
+exec "dashi power daemon"
 ```
