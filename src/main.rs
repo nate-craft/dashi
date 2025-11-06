@@ -1,3 +1,5 @@
+use std::process::exit;
+
 use clap::Parser;
 use color_eyre::Result;
 
@@ -20,17 +22,28 @@ struct Args {
 }
 
 fn main() -> Result<()> {
+    color_eyre::install()?;
     let args = Args::parse();
 
-    match args.command {
-        Command::Brightness { modifier } => BrightnessSpec::new(args.silent).run(modifier)?,
-        Command::Volume { modifier } => VolumeSpec::new(args.silent).run(modifier)?,
-        Command::Bookmark { modifier } => BookmarkSpec::new(args.silent)?.run(modifier)?,
-        Command::Bluetooth { modifier } => BluetoothSpec::new(args.silent).run(modifier)?,
-        Command::Power { modifier } => PowerSpec::new(args.silent).run(modifier)?,
+    let result = match args.command {
+        Command::Brightness { modifier } => BrightnessSpec::new(args.silent).run(modifier),
+        Command::Volume { modifier } => VolumeSpec::new(args.silent).run(modifier),
+        Command::Bookmark { modifier } => BookmarkSpec::new(args.silent)?.run(modifier),
+        Command::Bluetooth { modifier } => BluetoothSpec::new(args.silent).run(modifier),
+        Command::Power { modifier } => PowerSpec::new(args.silent).run(modifier),
         Command::Backup => todo!(),
         Command::Nightshift => todo!(),
-    }
+    };
 
-    Ok(())
+    match result {
+        Ok(_) => Ok(()),
+        Err(err) => {
+            if cfg!(debug_assertions) {
+                return Err(err);
+            } else {
+                eprintln!("{}", err.to_string());
+                exit(1);
+            }
+        }
+    }
 }

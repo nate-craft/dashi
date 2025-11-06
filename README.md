@@ -42,9 +42,10 @@ cat pkg/30-bluetooth.rules | sudo tee /etc/polkit-1/rules.d/30-bluetooth.rules >
 # Building the dashi binary
 cargo install --git https://github.com/nate-craft/dashi
 
-# Reload udev. May require a restart for full functionality
+# Reload udev and polkit. May require a restart for full functionality
 sudo udevadm control --reload
 sudo udevadm trigger
+sudo systemctl restart polkit
 
 ```
 

@@ -65,8 +65,7 @@ impl PowerSpec {
         match socket::bind(socket.into_raw_fd(), &address) {
             Ok(binded) => binded,
             Err(NixErrno::EADDRINUSE) => {
-                println!("Dashi power daemon is already in used");
-                return Ok(());
+                return Err(Error::msg("Dashi power daemon is already in used"));
             }
             Err(generic) => return Err(Error::new(generic)),
         };
