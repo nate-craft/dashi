@@ -7,13 +7,12 @@
 - [x] Volume
 - [x] Bookmarks
 - [x] Battery
-  - [ ] Battery daemon
+  - [x] Battery daemon
 - [x] Bluetooth
+- [ ] Status Bar
 - [ ] Nightshift
 - [ ] Screenshot
-- [ ] Rofi replacement
-  - [ ] Input/Output
-  - [ ] Command running
+- [ ] Backups
 
 ## Other
 
