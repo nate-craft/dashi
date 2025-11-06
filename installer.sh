@@ -23,5 +23,6 @@ rm -rf dashi
 
 sudo udevadm control --reload
 sudo udevadm trigger
+sudo systemctl restart polkit
 
-printf "Dashi successfully installed to $(command -v dashi). If brightness/bluetooth is not working immediately, restart computer."
+printf "Dashi installed to %s. If brightness/bluetooth is not functional immediately, restart your system\n" "$(command -v dashi)"
