@@ -5,7 +5,9 @@ panic() {
     exit 1
 }
 
-git clone https://github.com/nate-craft/dashi dashi || panic "Could not clone dashi repository!" 
+git clone https://github.com/nate-craft/dashi dashi || panic "Could not clone dashi repository!"
+
+cd dashi
 
 sudo groupadd -f wheel
 sudo usermod -aG wheel "$USER"
