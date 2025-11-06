@@ -31,6 +31,8 @@ curl --proto '=https' --tlsv1.2 -LsSf https://raw.githubusercontent.com/nate-cra
 
 Dashi can be manually built with [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
 ```sh
+git clone https://github.com/nate-craft/dashi
+
 # Permissions for bluetooth and backlight control
 sudo groupadd -f wheel
 sudo usermod -aG wheel "$USER"
@@ -39,6 +41,11 @@ cat pkg/30-bluetooth.rules | sudo tee /etc/polkit-1/rules.d/30-bluetooth.rules >
 
 # Building the dashi binary
 cargo install --git https://github.com/nate-craft/dashi
+
+# Reload udev. May require a restart for full functionality
+sudo udevadm control --reload
+sudo udevadm trigger
+
 ```
 
 Dashi requires [pulseaudio](https://www.freedesktop.org/wiki/Software/PulseAudio/) and optionally any notification library
