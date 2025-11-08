@@ -19,7 +19,7 @@ cat pkg/30-bluetooth.rules | sudo tee /etc/polkit-1/rules.d/30-bluetooth.rules >
 
 cargo install --path . || panic "Could not install dashi!"
 
-rm -rf dashi
+cd .. && rm -rf dashi || "Could not cleanup repository. Please manually delete dashi/ folder"
 
 sudo udevadm control --reload
 sudo udevadm trigger
