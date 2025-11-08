@@ -1,10 +1,6 @@
-use std::{fs, os::fd::IntoRawFd, path::Path, thread, time::Duration};
-
+use std::{fs, path::Path, thread, time::Duration};
 use color_eyre::{eyre::Error, Result};
-use nix::sys::socket::{self, AddressFamily, SockFlag, SockType, UnixAddr};
-
-use crate::{command::PowerCommand, notify::notify};
-use nix::errno::Errno as NixErrno;
+use crate::{command::PowerCommand, daemon::Daemon, notify::notify};
 
 pub struct PowerSpec {
     silent: bool,
@@ -53,22 +49,10 @@ impl PowerSpec {
         Ok(())
     }
 
-    fn daemon(&self) -> Result<(), Error> {
-        let address = UnixAddr::new_abstract("dashi-power".as_bytes())?;
-        let socket = socket::socket(
-            AddressFamily::Unix,
-            SockType::Stream,
-            SockFlag::empty(),
-            None,
-        )?;
-
-        match socket::bind(socket.into_raw_fd(), &address) {
-            Ok(binded) => binded,
-            Err(NixErrno::EADDRINUSE) => {
-                return Err(Error::msg("Dashi power daemon is already in used"));
-            }
-            Err(generic) => return Err(Error::new(generic)),
-        };
+    fn daemon(&self) -> Result<()> {
+        if Daemon::new("dashi-power")?.is_running()? {
+            return Err(Error::msg("Dashi power daemon is already in used"));
+        }
 
         println!("Dashi battery daemon started");
 
@@ -80,12 +64,12 @@ impl PowerSpec {
         }
     }
 
-    fn is_plugged(&self) -> Result<bool, Error> {
+    fn is_plugged(&self) -> Result<bool> {
         let string = fs::read_to_string(Path::new(PATH_PLUGGED))?;
         Ok(string[..string.len() - 1].parse::<i32>()? != 0)
     }
 
-    fn capacity(&self) -> Result<i32, Error> {
+    fn capacity(&self) -> Result<i32> {
         let string = fs::read_to_string(Path::new(PATH_CAPACITY)).map_err(|_| {
             Error::msg("Could not find BAT0 capacity. Does this computer have an internal battery?")
         })?;

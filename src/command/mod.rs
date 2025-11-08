@@ -3,6 +3,7 @@ use clap::Subcommand;
 pub mod bluetooth;
 pub mod bookmark;
 pub mod brightness;
+pub mod nightshift;
 pub mod power;
 pub mod volume;
 
@@ -29,7 +30,10 @@ pub enum Command {
         modifier: PowerCommand,
     },
     Backup,
-    Nightshift,
+    Nightshift {
+        #[command(subcommand)]
+        modifier: NightShiftCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -85,6 +89,8 @@ pub enum BookmarkCommand {
 
 #[derive(Subcommand)]
 pub enum BluetoothCommand {
+    Start,
+    Stop,
     Toggle,
     Status,
 }
@@ -95,4 +101,12 @@ pub enum PowerCommand {
     Plugged,
     Info,
     Daemon,
+}
+
+#[derive(Subcommand)]
+pub enum NightShiftCommand {
+    Start,
+    Stop,
+    Toggle,
+    Status,
 }

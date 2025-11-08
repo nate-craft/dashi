@@ -20,6 +20,8 @@ Dashi is a simple shell for lightweight window managers on Linux with minimal re
 
 - Easily add/remove system notification with the `--silent` flag
 
+- Control automatic nightshift (currently via gammastep)
+
 ___
 
 ## Installation
@@ -49,7 +51,15 @@ sudo systemctl restart polkit
 
 ```
 
-Dashi requires [pulseaudio](https://www.freedesktop.org/wiki/Software/PulseAudio/) and optionally any notification library
+## Dependencies
+
+Dashi has no build time dependencies. For some features, runtime dependencies are necessary:
+
+- Audio Control: [pulseaudio](https://www.freedesktop.org/wiki/Software/PulseAudio/)
+- Notifications (Optional): any notification daemon
+- Nightshift: [gammastep](https://gitlab.com/chinstrap/gammastep)
+  - This may be removed in the future in favor of a native solution
+
 ___
 
 ## Integration with Sway
@@ -72,4 +82,5 @@ bindsym --locked XF86MonBrightnessDown exec "dashi brightness sub 5"
 bindsym --locked XF86Bluetooth exec "dashi bluetooth toggle"
 
 exec "dashi power daemon"
+exec "dashi nightshift start"
 ```

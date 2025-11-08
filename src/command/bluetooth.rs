@@ -30,6 +30,8 @@ impl BluetoothSpec {
 
         match modifier {
             BluetoothCommand::Toggle => self.toggle_status(&proxy)?,
+            BluetoothCommand::Start => self.start(&proxy)?,
+            BluetoothCommand::Stop => self.stop(&proxy)?,
             BluetoothCommand::Status => {
                 let enabled = self.get_status(&proxy)?;
                 self.feedback(enabled)?;
@@ -37,6 +39,16 @@ impl BluetoothSpec {
         }
 
         Ok(())
+    }
+
+    fn start(&self, proxy: &Proxy) -> Result<()> {
+        proxy.call_method("StartUnit", &(SERVICE, TOGGLE_MODE))?;
+        self.feedback(true)
+    }
+
+    fn stop(&self, proxy: &Proxy) -> Result<()> {
+        proxy.call_method("StopUnit", &(SERVICE, TOGGLE_MODE))?;
+        self.feedback(false)
     }
 
     fn toggle_status(&self, proxy: &Proxy) -> Result<()> {
