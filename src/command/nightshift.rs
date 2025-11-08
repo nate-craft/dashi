@@ -40,12 +40,14 @@ impl NightShiftSpec {
             Command::new(SHIFT_COMMAND)
                 .output()
                 .map(|_| ())
-                .map_err(|err| Error::new(err))
+                .map_err(|err| Error::new(err))?;
+            self.feedback(true)
         }
     }
 
     fn stop(&self) -> Result<()> {
-        Daemon::kill(SHIFT_COMMAND)
+        Daemon::kill(SHIFT_COMMAND)?;
+        self.feedback(false)
     }
 
     fn toggle(&self, running: bool) -> Result<()> {
