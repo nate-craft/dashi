@@ -60,7 +60,7 @@ impl PowerSpec {
             if let Ok(capacity) = self.capacity() && !self.is_plugged()? && self.capacity()? < 20 {
                 notify(self.silent, "Low Battery", format!("{}%", capacity))?;
             }
-            thread::sleep(Duration::from_secs(5));
+            thread::sleep(Duration::from_mins(5));
         }
     }
 
