@@ -9,10 +9,6 @@
 - [x] Battery
   - [x] Battery daemon
 - [x] Bluetooth
-- [ ] Status Bar
-- [ ] Nightshift
-- [ ] Screenshot
-- [ ] Backups
 
 ## Other
 

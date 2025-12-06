@@ -29,7 +29,6 @@ pub enum Command {
         #[command(subcommand)]
         modifier: PowerCommand,
     },
-    Backup,
     Nightshift {
         #[command(subcommand)]
         modifier: NightShiftCommand,

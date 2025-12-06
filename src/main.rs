@@ -33,7 +33,6 @@ fn main() -> Result<()> {
         Command::Bluetooth { modifier } => BluetoothSpec::new(args.silent).run(modifier),
         Command::Power { modifier } => PowerSpec::new(args.silent).run(modifier),
         Command::Nightshift { modifier } => NightShiftSpec::new(args.silent).run(modifier),
-        Command::Backup => todo!(),
     };
 
     match result {
