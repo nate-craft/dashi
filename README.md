@@ -35,7 +35,7 @@ Dashi can also be installed via the AUR:
 ```
 paru -Syu dashi
 ```
-> Note: if AUR is used for installation. Manual polkit/udev instructions must still be followed
+> Note: if AUR is used for installation. The user must still be in the `wheel` group and a system reboot is required.
 
 Dashi can be manually built with [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
 ```sh
