@@ -1,0 +1,78 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Release
+        run: gh release create "$(grep '^version =' Cargo.toml | cut -d' ' -f3 | tr -d '\"')" || echo "Release failed, continuing..."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish
+        run: cargo publish --allow-dirty || echo "Cargo publish failed, continuing..."
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_TOKEN }}
+
+  build:
+    runs-on: ${{ matrix.runner }}
+    needs: release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-amd64
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            command: cargo
+          - name: linux-arm64
+            runner: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            command: cross
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        
+      - name: Version
+        shell: bash
+        run: echo "VERSION=$(grep '^version =' Cargo.toml | cut -d' ' -f3 | tr -d '\"')" >> $GITHUB_ENV
+  
+      - name: Install Cross
+        shell: bash
+        if: matrix.command == 'cross'
+        run: |
+          curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+          cargo binstall --no-confirm cross
+ 
+      - name: Build Binary
+        run: ${{ matrix.command }} build --release --target ${{ matrix.target }}
+
+      - name: Name Binary
+        shell: bash
+        run: |
+          DIR="target/${{ matrix.target }}/release"
+          BIN_NAME="dashi-${VERSION}-${{ matrix.target }}"
+          mv "${DIR}/dashi" "${DIR}/${BIN_NAME}"
+          echo "BIN_NAME=${BIN_NAME}" >> $GITHUB_ENV
+          
+      - name: Upload binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/${{ matrix.target }}/release/${{ env.BIN_NAME }}
+          tag_name: ${{ env.VERSION }}
+          name: ${{ env.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
