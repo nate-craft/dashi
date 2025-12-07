@@ -40,7 +40,7 @@ jobs:
           - name: linux-arm64
             runner: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-            command: cross
+            command: cargo
 
     steps:
       - name: Checkout
@@ -49,17 +49,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Dependencies x86
-        if: matrix.name == 'linux-amd64'
+      - name: Dependencies 
         run: sudo apt update && sudo apt install -y libpulse-dev
 
-      - name: Dependencies ARM
-        if: matrix.name == 'linux-arm64'
-        run: |
-          sudo dpkg --add-architecture arm64
-          sudo apt update
-          sudo apt install -y libpulse-dev:arm64 gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-        
       - name: Version
         shell: bash
         run: echo "VERSION=$(grep '^version =' Cargo.toml | cut -d' ' -f3 | tr -d '\"')" >> $GITHUB_ENV
