@@ -28,17 +28,29 @@ impl BluetoothSpec {
             "org.freedesktop.systemd1.Manager",
         )?;
 
-        match modifier {
-            BluetoothCommand::Toggle => self.toggle_status(&proxy)?,
-            BluetoothCommand::Start => self.start(&proxy)?,
-            BluetoothCommand::Stop => self.stop(&proxy)?,
-            BluetoothCommand::Status => {
-                let enabled = self.get_status(&proxy)?;
-                self.feedback(enabled)?;
-            }
+        let result = match modifier {
+            BluetoothCommand::Toggle => self.toggle_status(&proxy),
+            BluetoothCommand::Start => self.start(&proxy),
+            BluetoothCommand::Stop => self.stop(&proxy),
+            BluetoothCommand::Status => self
+                .get_status(&proxy)
+                .map(|enabled| self.feedback(enabled))
+                .flatten(),
+        };
+
+        if result.is_err() {
+            notify(
+                false,
+                "Dashi Error",
+                "Bluetooth cannot be modified. See documentation for more information",
+            )?;
+            eprintln!(
+                r#"Bluetooth service is not accessible without root permissions
+                   See https://github.com/nate-craft/dashi for more information"#
+            );
         }
 
-        Ok(())
+        result
     }
 
     fn start(&self, proxy: &Proxy) -> Result<()> {

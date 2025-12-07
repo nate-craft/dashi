@@ -26,10 +26,16 @@ ___
 
 ## Installation
 
-Dashi can most easilly be installed via the installer script:
+[Recommended] Dashi can most easilly be installed via the installer script:
 ```sh
 curl --proto '=https' --tlsv1.2 -LsSf https://raw.githubusercontent.com/nate-craft/dashi/refs/heads/main/installer.sh | sh
 ```
+
+Dashi can also be installed via the AUR:
+```
+paru -Syu dashi
+```
+> Note: if AUR is used for installation. Manual polkit/udev instructions must still be followed
 
 Dashi can be manually built with [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html):
 ```sh

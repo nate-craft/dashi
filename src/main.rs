@@ -1,4 +1,4 @@
-use std::process::exit;
+use std::{fs, process::exit};
 
 use clap::Parser;
 use color_eyre::Result;
@@ -24,6 +24,7 @@ struct Args {
 
 fn main() -> Result<()> {
     color_eyre::install()?;
+
     let args = Args::parse();
 
     let result = match args.command {

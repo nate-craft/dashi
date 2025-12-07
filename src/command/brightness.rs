@@ -17,17 +17,36 @@ impl BrightnessSpec {
     }
 
     pub fn run(&self, modifier: BrightnessCommand) -> Result<()> {
-        match modifier {
+        let result = match modifier {
             BrightnessCommand::Add { n } => {
-                self.set_brightness(self.get_brightness()? as f32 + n as f32)?
+                self.set_brightness(self.get_brightness()? as f32 + n as f32)
             }
             BrightnessCommand::Sub { n } => {
-                self.set_brightness(self.get_brightness()? as f32 - n as f32)?
+                self.set_brightness(self.get_brightness()? as f32 - n as f32)
             }
-            BrightnessCommand::Set { n } => self.set_brightness((n as f32).min(100.0).max(0.01))?,
-            BrightnessCommand::Get => {}
+            BrightnessCommand::Set { n } => self.set_brightness((n as f32).min(100.0).max(0.01)),
+            BrightnessCommand::Get => Ok(()),
+        };
+
+        match result {
+            Ok(_) => self.show_brightness()?,
+            Err(_) => {
+                notify(
+                    false,
+                    "Dashi Error",
+                    "Brightness cannot be modified. See documentation for more information",
+                )?;
+                eprintln!(
+                    r#"Brightness file is not writable without giving the current user access. See
+                    https://github.com/nate-craft/dashi for more information"#
+                );
+            }
         }
 
+        result
+    }
+
+    fn show_brightness(&self) -> Result<()> {
         let brightness_new = self.get_brightness()?;
 
         if brightness_new == 0 {
