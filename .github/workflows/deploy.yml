@@ -46,8 +46,13 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Dependencies
+      - name: Dependencies x86
+        if: matrix.name == 'linux-amd64'
         run: sudo apt-get update && sudo apt-get install -y libpulse-dev
+
+      - name: Dependencies ARM
+        if: matrix.name == 'linux-arm64'
+        run: sudo apt-get update && sudo apt-get install -y libpulse-dev:arm64 gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
         
       - name: Version
         shell: bash

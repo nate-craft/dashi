@@ -2,6 +2,14 @@
 name = "dashi"
 version = "1.0.0"
 edition = "2024"
+authors = ["Nate Craft"]
+keywords = ["shell", "dashboard", "brightness", "volume"]
+license = "MIT"
+description = "Simple shell for Linux window managers"
+readme = "README.md"
+homepage = "https://github.com/nate-craft/dashi"
+repository = "https://github.com/nate-craft/dashi"
+
 
 [dependencies]
 clap = { version = "4.5.49", features = ["derive"] }
