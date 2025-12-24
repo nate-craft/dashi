@@ -37,17 +37,17 @@ impl NightShiftSpec {
         if running {
             return Err(Error::msg("Gammastep is already running!"));
         } else {
+            self.feedback(true)?;
             Command::new(SHIFT_COMMAND)
                 .output()
                 .map(|_| ())
-                .map_err(|err| Error::new(err))?;
-            self.feedback(true)
+                .map_err(|err| Error::new(err))
         }
     }
 
     fn stop(&self) -> Result<()> {
-        Daemon::kill(SHIFT_COMMAND)?;
-        self.feedback(false)
+        self.feedback(false)?;
+        Daemon::kill(SHIFT_COMMAND)
     }
 
     fn toggle(&self, running: bool) -> Result<()> {
@@ -56,8 +56,6 @@ impl NightShiftSpec {
         } else {
             self.start(running)?;
         }
-
-        self.feedback(running)
     }
 
     fn status(&self) -> Result<bool, Error> {
