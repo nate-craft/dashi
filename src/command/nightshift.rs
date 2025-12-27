@@ -52,9 +52,9 @@ impl NightShiftSpec {
 
     fn toggle(&self, running: bool) -> Result<()> {
         if running {
-            self.stop()?;
+            self.stop()
         } else {
-            self.start(running)?;
+            self.start(running)
         }
     }
 

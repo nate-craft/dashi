@@ -1,4 +1,4 @@
-use std::{fs, process::exit};
+use std::process::exit;
 
 use clap::Parser;
 use color_eyre::Result;
