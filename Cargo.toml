@@ -1,10 +1,10 @@
 [package]
 name = "dashi"
-version = "1.0.2"
+version = "1.0.3"
 edition = "2024"
 authors = ["Nate Craft"]
 keywords = ["shell", "dashboard", "brightness", "volume"]
-license = "MIT"
+license = "GLP-2.0"
 description = "Simple shell for Linux window managers"
 readme = "README.md"
 homepage = "https://github.com/nate-craft/dashi"
