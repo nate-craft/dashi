@@ -1,4 +1,4 @@
-use notify_rust::Notification;
+use notify_rust::{Hint, Notification};
 
 pub fn notify(
     silent: bool,
@@ -12,6 +12,10 @@ pub fn notify(
             .summary(title.as_ref())
             .body(body.as_ref())
             .id(9999)
+            .hint(Hint::Custom(
+                "x-canonical-private-synchronous".to_string(),
+                "anything".to_string(),
+            ))
             .show()
             .map(|_| ())
     }
