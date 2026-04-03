@@ -14,8 +14,10 @@ sudo usermod -aG wheel "$USER"
 
 cat pkg/90-backlight.rules | sudo tee /etc/udev/rules.d/90-backlight.rules > /dev/null 2>&1 \
     || panic "Could not install backlight udev rule!"
-cat pkg/30-bluetooth.rules | sudo tee /etc/polkit-1/rules.d/30-bluetooth.rules > /dev/null 1>&1 \
-    || panic "Could not install bluetooth polkit rule!"
+cat pkg/91-leds.rules | sudo tee /etc/udev/rules.d/91-leds.rules > /dev/null 2>&1 \
+    || panic "Could not install leds udev rule!"
+cat pkg/30-bluetooth.rules | sudo tee /etc/udev/rules.d/30-bluetooth.rules > /dev/null 2>&1 \
+    || panic "Could not install bluetooth udev rule!"
 
 cargo install --path . || panic "Could not install dashi!"
 
