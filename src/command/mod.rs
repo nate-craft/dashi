@@ -1,5 +1,6 @@
 use clap::Subcommand;
 
+pub mod backlight;
 pub mod bluetooth;
 pub mod bookmark;
 pub mod brightness;
@@ -12,6 +13,10 @@ pub enum Command {
     Brightness {
         #[command(subcommand)]
         modifier: BrightnessCommand,
+    },
+    Backlight {
+        #[command(subcommand)]
+        modifier: BacklightCommand,
     },
     Volume {
         #[command(subcommand)]
@@ -58,6 +63,23 @@ pub enum VolumeCommand {
 
 #[derive(Subcommand)]
 pub enum BrightnessCommand {
+    Add {
+        #[arg(value_enum)]
+        n: u32,
+    },
+    Sub {
+        #[arg(value_enum)]
+        n: u32,
+    },
+    Set {
+        #[arg(value_enum)]
+        n: u32,
+    },
+    Get,
+}
+
+#[derive(Subcommand)]
+pub enum BacklightCommand {
     Add {
         #[arg(value_enum)]
         n: u32,
