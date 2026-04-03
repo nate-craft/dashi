@@ -37,7 +37,7 @@ impl BacklightSpec {
                     "Backlight brightness cannot be modified. See documentation for more information",
                 )?;
                 eprintln!(
-                    r#"Brightness file is not writable without giving the current user access. See
+                    r#"Backlight file is not writable without giving the current user access. See
                     https://github.com/nate-craft/dashi for more information"#
                 );
                 eprintln!("Error: {}", e);
@@ -51,11 +51,11 @@ impl BacklightSpec {
         let brightness_new = self.get_brightness()?;
 
         if brightness_new == 0 {
-            Ok(notify(self.silent, "Brightness", "Minimum")?)
+            Ok(notify(self.silent, "Backlight", "Minimum")?)
         } else {
             Ok(notify(
                 self.silent,
-                "Brightness",
+                "Backlight",
                 format!("{}%", brightness_new),
             )?)
         }
