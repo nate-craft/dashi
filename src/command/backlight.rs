@@ -24,7 +24,7 @@ impl BacklightSpec {
             BacklightCommand::Sub { n } => {
                 self.set_brightness(self.get_brightness()? as f32 - n as f32)
             }
-            BacklightCommand::Set { n } => self.set_brightness((n as f32).min(100.0).max(0.01)),
+            BacklightCommand::Set { n } => self.set_brightness((n as f32).min(100.0).max(1.0)),
             BacklightCommand::Get => Ok(()),
         };
 
@@ -63,7 +63,7 @@ impl BacklightSpec {
 
     fn set_brightness(&self, percent: f32) -> Result<()> {
         let raw = self.get_raw_max_brightness()? as f32;
-        let written = (percent.min(100.0).max(0.01) / 100.0 * raw) as u32;
+        let written = (percent.min(100.0).max(1.0) / 100.0 * raw) as u32;
 
         Ok(fs::write(
             self.get_path_brightness()?,
