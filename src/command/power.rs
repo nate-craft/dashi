@@ -7,7 +7,7 @@ pub struct PowerSpec {
 }
 
 const PATH_CAPACITY: &'static str = "/sys/class/power_supply/BAT0/capacity";
-const PATH_PLUGGED: &'static str = "/sys/class/power_supply/AC/online";
+const PATH_PLUGGED: &'static str = "/sys/class/power_supply/ADP1/online";
 
 impl PowerSpec {
     pub fn new(silent: bool) -> Self {
